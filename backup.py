@@ -92,44 +92,20 @@ def search_scheme(keyword):
 # Streamlit app layout
 st.title("Service Scheme Filter and Search")
 
-
-# Create columns for filters
-col1, col2, col3, col4 = st.columns([1, 1, 1, 0.5])  # Add a fourth column for the button
-
-
-search_found = False
-
 # Filters
-with col1:
-    selected_value = st.selectbox("Company Type", options=['ALL'] + unique_values, index=0)
+selected_value = st.selectbox("Company Type", options=['ALL'] + unique_values, index=0)
+sector = st.selectbox("Sector", options=['All Sector'] + unique_values_sector, index=0)
 
-with col2:
-    sector = st.selectbox("Sector", options=['All Sector'] + unique_values_sector, index=0)
-
-with col3:
-    search_keyword = st.selectbox("Search Scheme", options=criteria3_options)
-
-with col4:
-    # Search functionality
-    if st.button("Search"):
-        search_result, image_url = search_scheme(search_keyword)
-        if not search_result.empty:
-            search_found = True  # Flag to indicate that results were found
-        else:
-            search_found = False
-
-
+# Display filtered data
 filtered_df = filter_dataframe(selected_value, sector)
+st.write("Filtered DataFrame:")
+st.dataframe(filtered_df)
 
-# Create two columns for displaying filtered data and search results
-col_left, col_right = st.columns(2)
-
-with col_left:
-    st.write("Filtered DataFrame:")
-    st.dataframe(filtered_df)
-
-with col_right:
-    if search_found:
+# Search functionality
+search_keyword = st.selectbox("Search Scheme", options=criteria3_options)
+if st.button("Search"):
+    search_result, image_url = search_scheme(search_keyword)
+    if not search_result.empty:
         st.write("Search Results:")
         st.dataframe(search_result)
         if image_url:
