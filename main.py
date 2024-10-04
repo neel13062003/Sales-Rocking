@@ -22,21 +22,21 @@ def convert_google_drive_link_to_direct_url(link):
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 
-creds_dict = {
-    "type": st.secrets["gcp_service_account"]["type"],
-    "project_id": st.secrets["gcp_service_account"]["project_id"],
-    "private_key_id": st.secrets["gcp_service_account"]["private_key_id"],
-    "private_key": st.secrets["gcp_service_account"]["private_key"].replace('\\n', '\n'),  # Handle newline characters
-    "client_email": st.secrets["gcp_service_account"]["client_email"],
-    "client_id": st.secrets["gcp_service_account"]["client_id"],
-    "auth_uri": st.secrets["gcp_service_account"]["auth_uri"],
-    "token_uri": st.secrets["gcp_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url": st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": st.secrets["gcp_service_account"]["client_x509_cert_url"],
-}
+# creds_dict = {
+#     "type": st.secrets["gcp_service_account"]["type"],
+#     "project_id": st.secrets["gcp_service_account"]["project_id"],
+#     "private_key_id": st.secrets["gcp_service_account"]["private_key_id"],
+#     "private_key": st.secrets["gcp_service_account"]["private_key"].replace('\\n', '\n'),  # Handle newline characters
+#     "client_email": st.secrets["gcp_service_account"]["client_email"],
+#     "client_id": st.secrets["gcp_service_account"]["client_id"],
+#     "auth_uri": st.secrets["gcp_service_account"]["auth_uri"],
+#     "token_uri": st.secrets["gcp_service_account"]["token_uri"],
+#     "auth_provider_x509_cert_url": st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
+#     "client_x509_cert_url": st.secrets["gcp_service_account"]["client_x509_cert_url"],
+# }
 
-# creds = ServiceAccountCredentials.from_json_keyfile_name(r"../ENV/key.json", scope)
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(r"../ENV/key.json", scope)
+# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 
 client = gspread.authorize(creds)
@@ -121,20 +121,27 @@ with col4:
 
 filtered_df = filter_dataframe(selected_value, sector)
 
+col_left = None
+col_right = None
+
 # Create two columns for displaying filtered data and search results
-col_left, col_right = st.columns(2)
+if search_found:
+    col_left, col_right = st.columns([2, 1])
+else :
+    col_left = st.columns(1)[0] 
 
 with col_left:
     st.write("Filtered DataFrame:")
     st.dataframe(filtered_df)
 
-with col_right:
-    if search_found:
+# Only use col_right if search_found is True and col_right is defined
+if search_found and col_right is not None:
+    with col_right:
         st.write("Search Results:")
         st.dataframe(search_result)
         if image_url:
             st.write("Pamphlet Image:")
             image = Image.open(requests.get(image_url, stream=True).raw)
             st.image(image)
-    else:
-        st.write("No results found.")
+else:
+    st.write("No results found.")
