@@ -30,7 +30,7 @@ creds_dict = {
     "client_x509_cert_url": st.secrets["gcp_service_account"]["client_x509_cert_url"],
 }
 
-# creds = ServiceAccountCredentials.from_json_keyfile_name(r"./oddoo.json", scope)
+# creds = ServiceAccountCredentials.from_json_keyfile_name(r"../ENV/key.json", scope)
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 
