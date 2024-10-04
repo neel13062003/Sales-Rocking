@@ -15,7 +15,7 @@ def convert_google_drive_link_to_direct_url(link):
 
 # Google Sheets connection setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(r"oddoo.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(r"./oddoo.json", scope)
 client = gspread.authorize(creds)
 
 # Get data from Google Sheets
