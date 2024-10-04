@@ -6,6 +6,11 @@ import requests
 from PIL import Image
 import tempfile
 
+
+# Set Streamlit page config to wide mode
+st.set_page_config(page_title="Service Scheme Filter and Search", layout="wide")
+
+
 # Convert Google Drive link to direct URL
 def convert_google_drive_link_to_direct_url(link):
     if 'drive.google.com' in link:
