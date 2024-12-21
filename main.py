@@ -22,21 +22,21 @@ def convert_google_drive_link_to_direct_url(link):
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 
-creds_dict = {
-    "type": st.secrets["gcp_service_account"]["type"],
-    "project_id": st.secrets["gcp_service_account"]["project_id"],
-    "private_key_id": st.secrets["gcp_service_account"]["private_key_id"],
-    "private_key": st.secrets["gcp_service_account"]["private_key"].replace('\\n', '\n'),  # Handle newline characters
-    "client_email": st.secrets["gcp_service_account"]["client_email"],
-    "client_id": st.secrets["gcp_service_account"]["client_id"],
-    "auth_uri": st.secrets["gcp_service_account"]["auth_uri"],
-    "token_uri": st.secrets["gcp_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url": st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": st.secrets["gcp_service_account"]["client_x509_cert_url"],
-}
+# creds_dict = {
+#     "type": st.secrets["gcp_service_account"]["type"],
+#     "project_id": st.secrets["gcp_service_account"]["project_id"],
+#     "private_key_id": st.secrets["gcp_service_account"]["private_key_id"],
+#     "private_key": st.secrets["gcp_service_account"]["private_key"].replace('\\n', '\n'),  # Handle newline characters
+#     "client_email": st.secrets["gcp_service_account"]["client_email"],
+#     "client_id": st.secrets["gcp_service_account"]["client_id"],
+#     "auth_uri": st.secrets["gcp_service_account"]["auth_uri"],
+#     "token_uri": st.secrets["gcp_service_account"]["token_uri"],
+#     "auth_provider_x509_cert_url": st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
+#     "client_x509_cert_url": st.secrets["gcp_service_account"]["client_x509_cert_url"],
+# }
 
-# creds = ServiceAccountCredentials.from_json_keyfile_name(r"../ENV/key.json", scope)
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(r"../ENV/key.json", scope)
+# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 
 client = gspread.authorize(creds)
@@ -69,7 +69,7 @@ criteria3_options = stored_df_test_service.Scheme.values.tolist()
 
 # Filter DataFrame
 def filter_dataframe(selected_value, sector):
-    filtered_df = stored_df_test_service[["SR. NO.", "Scheme", "Benefits", "SECTOR", "COMPANY TYPE", "Deadline", "Days left"]]
+    filtered_df = stored_df_test_service[["SR. NO.", "Scheme", 	"Funding Type","Benefits", "SECTOR", "COMPANY TYPE", "Deadline", "Days left"]]
     if selected_value != 'ALL':
         filtered_df = filtered_df[(filtered_df["COMPANY TYPE"].apply(lambda x: selected_value in x)) | 
                                   (filtered_df["COMPANY TYPE"].apply(lambda x: 'ALL' in x))]
@@ -106,17 +106,17 @@ with col1:
 with col2:
     sector = st.selectbox("Sector", options=['All Sector'] + unique_values_sector, index=0)
 
-with col3:
-    search_keyword = st.selectbox("Search Scheme", options=criteria3_options)
+# with col3:
+#     search_keyword = st.selectbox("Search Scheme", options=criteria3_options)
 
-with col4:
-    # Search functionality
-    if st.button("Search"):
-        search_result, image_url = search_scheme(search_keyword)
-        if not search_result.empty:
-            search_found = True  # Flag to indicate that results were found
-        else:
-            search_found = False
+# with col4:
+#     # Search functionality
+#     if st.button("Search"):
+#         search_result, image_url = search_scheme(search_keyword)
+#         if not search_result.empty:
+#             search_found = True  # Flag to indicate that results were found
+#         else:
+#             search_found = False
 
 
 filtered_df = filter_dataframe(selected_value, sector)
@@ -134,14 +134,14 @@ with col_left:
     st.write("Filtered DataFrame:")
     st.dataframe(filtered_df)
 
-# Only use col_right if search_found is True and col_right is defined
-if search_found and col_right is not None:
-    with col_right:
-        st.write("Search Results:")
-        st.dataframe(search_result)
-        if image_url:
-            st.write("Pamphlet Image:")
-            image = Image.open(requests.get(image_url, stream=True).raw)
-            st.image(image)
-else:
-    st.write("No results found.")
+# # Only use col_right if search_found is True and col_right is defined
+# if search_found and col_right is not None:
+#     with col_right:
+#         st.write("Search Results:")
+#         st.dataframe(search_result)
+#         if image_url:
+#             st.write("Pamphlet Image:")
+#             image = Image.open(requests.get(image_url, stream=True).raw)
+#             st.image(image)
+# else:
+#     st.write("No results found.")
